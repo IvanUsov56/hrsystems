@@ -6,16 +6,34 @@ use App\Http\Requests\StoreDeliveryRequest;
 use App\Http\Requests\UpdateDeliveryRequest;
 use App\Models\Delivery;
 use App\Models\Warehouse;
-use Illuminate\Http\Client\Request;
+use App\Traits\FilterTrait;
+use Illuminate\Http\Request;
 
 class DeliveryController extends Controller
 {
+
+    use FilterTrait;
+
+    private $sort_list = [
+        'box_count',
+        'receipt_date'
+    ];
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $deliveries = Delivery::all();
+        $filter = self::getFilterSort($request);
+        $deliveries = Delivery::orderBy('receipt_date','desc')->get();
+        if(isset($filter['sort']['box_count'])){
+            $deliveries = Delivery::orderBy('box_count',$filter['sort']['box_count'])->get();
+        }
+
+        if(isset($filter['sort']['receipt_date'])){
+            $deliveries = Delivery::orderBy('receipt_date',$filter['sort']['receipt_date'])->get();
+        }
+
         return view('delivery.index', compact('deliveries'));
     }
 
