@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [\App\Http\Controllers\DeliveryController::class, 'index']);
+
+Route::resource('delivery', \App\Http\Controllers\DeliveryController::class)->names('delivery');
+Route::post('delivery/delete', [\App\Http\Controllers\DeliveryController::class,'destroySelected'])->name('delivery.destroy.selected');
